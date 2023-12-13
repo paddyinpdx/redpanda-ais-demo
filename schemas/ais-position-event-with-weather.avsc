@@ -1,0 +1,107 @@
+{
+  "type": "record",
+  "namespace": "paddyinpdx.demos.avro",
+  "name": "AisPositionEventWithWeather",
+  "fields": [
+    {
+      "name": "mmsi",
+      "type": "int"
+    },
+    {
+      "name": "status",
+      "type": "string",
+      "default": "undefined"
+    },
+    {
+      "name": "timestamp",
+      "type": "string"
+    },
+    {
+      "name": "location",
+      "type": {
+        "type": "record",
+        "name": "gps",
+        "fields": [
+          {
+            "name": "lat",
+            "type": {
+              "type": "double",
+              "arg.properties": {
+                "range": {
+                  "min": -90.0,
+                  "max": 90.0
+                }
+              }
+            }
+          },
+          {
+            "name": "lon",
+            "type": {
+              "type": "double",
+              "arg.properties": {
+                "range": {
+                  "min": -180.0,
+                  "max": 180.0
+                }
+              }
+            }
+          },
+          {
+            "name": "locale",
+            "type": "string"
+          },
+          {
+            "name": "region",
+            "type": "string"
+          },
+          {
+            "name": "country",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "speed",
+      "type": "int"
+    },
+    {
+      "name": "heading",
+      "type": "int"
+    },
+    {
+      "name": "weather",
+      "type": {
+        "type": "record",
+        "name": "data",
+        "fields": [
+          {
+            "name": "condition",
+            "type": "string"
+          },
+          {
+            "name": "temp_f",
+            "type": "double"
+          },
+          {
+            "name": "wind",
+            "type": {
+              "type": "record",
+              "name": "wind",
+              "fields": [
+                {
+                  "name": "mph",
+                  "type": "double"
+                },
+                {
+                  "name": "dir",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

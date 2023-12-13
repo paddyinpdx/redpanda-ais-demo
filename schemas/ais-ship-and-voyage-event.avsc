@@ -1,0 +1,31 @@
+{
+  "type" : "record",
+  "namespace" : "paddyinpdx.demos.avro",
+  "name" : "AisShipAndVoyage",
+  "fields" : [
+    {
+      "name": "mmsi",
+      "type": "int"
+    },
+    {
+      "name": "timestamp",
+      "type": "int"
+    },
+    {
+      "name": "shipname",
+      "type": "string"
+    },
+    {
+      "name": "callsign",
+      "type": "string"
+    },
+    {
+      "name": "shiptype",
+      "type": "string"
+    },
+    {
+      "name": "destination",
+      "type": "string"
+    }
+  ]
+}

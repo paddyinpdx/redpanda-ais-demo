@@ -1,0 +1,61 @@
+{
+  "type": "record",
+  "namespace": "paddyinpdx.demos.avro",
+  "name": "AisPositionEvent",
+  "fields": [
+    {
+      "name": "mmsi",
+      "type": "int"
+    },
+    {
+      "name": "status",
+      "type": "string",
+      "default": "undefined"
+    },
+    {
+      "name": "timestamp",
+      "type": "long"
+    },
+    {
+      "name": "location",
+      "type": {
+        "type": "record",
+        "name": "gps",
+        "fields": [
+          {
+            "name": "lat",
+            "type": {
+              "type": "double",
+              "arg.properties": {
+                "range": {
+                  "min": -90.0,
+                  "max": 90.0
+                }
+              }
+            }
+          },
+          {
+            "name": "lon",
+            "type": {
+              "type": "double",
+              "arg.properties": {
+                "range": {
+                  "min": -180.0,
+                  "max": 180.0
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "speed",
+      "type": "int"
+    },
+    {
+      "name": "heading",
+      "type": "int"
+    }
+  ]
+}
