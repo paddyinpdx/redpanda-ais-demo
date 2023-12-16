@@ -114,4 +114,5 @@ def epoch_to_iso_8601_utc(epoch):
     return datetime.utcfromtimestamp(epoch).isoformat() + 'Z'
 
 def on_error_callback(error: KafkaError):
+    logger = get_logger()
     logger.error(error)

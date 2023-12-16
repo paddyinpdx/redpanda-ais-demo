@@ -61,25 +61,19 @@ if __name__ == '__main__':
                 key = str(uuid4())
                 value = {
                     "mmsi": v["mmsi"],
-                    "timestamp": utils.epoch_to_iso_8601_utc(v["timestamp"]),
+                    "timestamp": v["timestamp"],
                     "status": v["status"],
-                    "location": {
-                        "lat": v["location"]["lat"],
-                        "lon": v["location"]["lon"],
-                        "locale": name,
-                        "region": region,
-                        "country": country
-                    },
                     "speed": v["speed"],
                     "heading": v["heading"],
-                    "weather": {
-                        "condition": condition,
-                        "temp_f": temp,
-                        "wind": {
-                            "mph": wind_mph,
-                            "dir": wind_dir
-                        }
-                    }
+                    "lat": v["location"]["lat"],
+                    "lon": v["location"]["lon"],
+                    "locale": name,
+                    "region": region,
+                    "country": country,
+                    "condition": condition,
+                    "temp_f": temp,
+                    "wind_mph": wind_mph,
+                    "wind_dir": wind_dir
                 }
                 utils.publish_message(producer, logger, producer_topic, key, value)
     except KeyboardInterrupt:
