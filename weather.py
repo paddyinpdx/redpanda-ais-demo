@@ -1,6 +1,8 @@
+import utils
 import http.client
 
-RAPID_API_KEY = '5c1fbab01amsh8f2b68f34c5f484p1afe63jsna472d586f39d'
+config = utils.get_config()
+rapid_api_key = config['rapid_api_key']
 
 class HttpsConnectionSingleton:
     _conn = None
@@ -14,7 +16,7 @@ class HttpsConnectionSingleton:
 def get_current_weather_for_location(lat, lon):
     conn = HttpsConnectionSingleton.get_connection()
     headers = {
-        'X-RapidAPI-Key': RAPID_API_KEY,
+        'X-RapidAPI-Key': rapid_api_key,
         'X-RapidAPI-Host': "weatherapi-com.p.rapidapi.com"
     }
 

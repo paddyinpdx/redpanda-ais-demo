@@ -8,8 +8,8 @@ config = utils.get_config()
 
 if __name__ == '__main__':
     group_id = "ship-and-voyage-events-consumer-group"
-    topic = "ship-and-voyage-events-raw"
-    consumer = utils.get_consumer(group_id, topic, logger)
+    consumer_topic = "ship-and-voyage-events-raw"
+    consumer = utils.get_consumer(group_id, consumer_topic, logger)
 
     pg_config = {
         'dbname': config['pg_dbname'],
@@ -21,10 +21,10 @@ if __name__ == '__main__':
     conn = psycopg2.connect(**pg_config)
     cursor = conn.cursor()
 
-    logger.info(f'Starting kafka avro consumer loop, topic: {topic}. ^C to exit.')
+    logger.info(f'Starting kafka avro consumer loop, topic: {consumer_topic}. ^C to exit.')
 
     try:
-        consumer.subscribe([topic])
+        consumer.subscribe([consumer_topic])
         while True:
             msg = consumer.poll()
 

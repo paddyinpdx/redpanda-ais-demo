@@ -1,6 +1,6 @@
 version: '3'
 networks:
-  demo_network:
+  ship_tracker_network:
     driver: bridge
 services:
   clickhouse:

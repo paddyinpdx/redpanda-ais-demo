@@ -3,7 +3,6 @@ create database norwegian_ais;
 --##########################################################################
 
 create table if not exists norwegian_ais.ship_pos_and_wx (
-    event_id String,
     mmsi UInt32,
     timestamp DateTime('UTC'),
     status String,
@@ -21,8 +20,8 @@ create table if not exists norwegian_ais.ship_pos_and_wx (
 ) ENGINE = Kafka()
 settings
     kafka_broker_list = 'redpanda:9092',
-    kafka_topic_list = 'ais-position-events-with-weather',
-    kafka_group_name = 'position_event_consumer-group',
+    kafka_topic_list = 'position-events-with-weather',
+    kafka_group_name = 'position-events-with-weather-consumer-group',
     kafka_format = 'JSON'
 
 describe table norwegian_ais.ship_pos_and_wx;
@@ -30,7 +29,6 @@ describe table norwegian_ais.ship_pos_and_wx;
 --##########################################################################
 
 create table if not exists norwegian_ais.ship_and_voyage (
-    event_id String,
     mmsi UInt32,
     timestamp DateTime('UTC'),
     name String,
@@ -39,10 +37,7 @@ create table if not exists norwegian_ais.ship_and_voyage (
     destination String
 ) ENGINE = Kafka()
 settings
-    kafka_broker_list = 'redpanda:9092',
-    kafka_topic_list = 'ais-ships-and-voyage-events-raw',
-    kafka_group_name = 'ship_voyage_event_consumer-group',
-    kafka_format = 'JSON'
+    --TODO: add postgres source
 
 describe table norwegian_ais.ship_and_voyage;
 
@@ -56,6 +51,19 @@ select p.*, v.name, v.type, v.callsign, v.destination
 from norwegian_ais.ship_pos_and_wx p
 join norwegian_ais.ship_and_voyage v
 on p.mmsi = v.mmsi
+
+settings
+stream_like_engine_allow_direct_select = 1;
+
+show view norwegian_ais.ship_view;
+
+--##########################################################################
+
+create materialized view norwegian_ais.ship_view
+            ENGINE = Memory
+as
+select *
+from norwegian_ais.ship_pos_and_wx
 
 settings
 stream_like_engine_allow_direct_select = 1;
