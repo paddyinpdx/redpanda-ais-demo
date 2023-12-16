@@ -42,8 +42,10 @@ try:
                             status = "NotReported"
 
                         speed = m["speed"]
-                        # Ignore ships that are probably not moving.
-                        if speed > 2:
+                        # Ignore ships that are probably not moving, or
+                        # are reporting moving too fast, which is probably
+                        # an error (quite a few report 102 for some reason).
+                        if speed > 2 and speed < 75:
                             value = {
                                 "mmsi": m["mmsi"],
                                 "timestamp": int(t["receiver_timestamp"], 10),
