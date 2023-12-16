@@ -1,7 +1,7 @@
 {
   "type" : "record",
-  "namespace" : "paddyinpdx.demos.avro",
-  "name" : "AisShipAndVoyage",
+  "namespace" : "shiptracker.demos.avro",
+  "name" : "ShipAndVoyageEvent",
   "fields" : [
     {
       "name": "mmsi",

@@ -2,19 +2,19 @@ import time
 import json
 import fastavro
 import utils
-
 from uuid import uuid4
 from confluent_kafka import KafkaException
-from confluent_kafka.cimpl import KafkaError
 from pyais.stream import TCPConnection
 
 logger = utils.get_logger()
 config = utils.get_config()
 
-topic = 'ais-position-events-raw'
-
-position_producer = utils.get_producer("ais-position-event", logger)
-ship_voyage_producer = utils.get_producer("ais-ship-and-voyage-event", logger)
+position_topic = "position-events-raw"
+position_schema_name = "position-event"
+ship_and_voyage_topic = "ship-and-voyage-events-raw"
+ship_and_voyage_schema_name = "ship-and-voyage-event"
+position_producer = utils.get_producer(position_schema_name, logger)
+ship_voyage_producer = utils.get_producer(ship_and_voyage_schema_name, logger)
 
 try:
     for msg in TCPConnection(host=config['ais_feed_host'], port=int(config['ais_feed_port'])):
@@ -39,7 +39,7 @@ try:
                         if hasattr(status, "value"):
                             status = status.name
                         else:
-                            status = "not_reported"
+                            status = "NotReported"
 
                         speed = m["speed"]
                         # Ignore ships that are probably not moving.
@@ -56,13 +56,13 @@ try:
                                 "heading": m["heading"]
                             }
 
-                            utils.publish_message(position_producer, logger, "ais-position-events-raw", key, value)
+                            utils.publish_message(position_producer, logger, position_topic, key, value)
                     case 5:
                         shiptype = m.get("ship_type", {})
                         if hasattr(shiptype, "value"):
                             shiptype = shiptype.name
                         else:
-                            shiptype = "not_reported"
+                            shiptype = "NotReported"
 
                         value = {
                             "mmsi": m["mmsi"],
@@ -73,7 +73,7 @@ try:
                             "destination": m["destination"]
                         }
 
-                        utils.publish_message(ship_voyage_producer, logger, "ais-ship-and-voyage-events-raw", key, value)
+                        utils.publish_message(ship_voyage_producer, logger, ship_and_voyage_topic, key, value)
                     case _:
                         logger.info(f"Ignoring message with type {msg_type}")
             except KafkaException as e:

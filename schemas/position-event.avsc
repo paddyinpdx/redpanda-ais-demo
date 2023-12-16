@@ -1,7 +1,7 @@
 {
   "type": "record",
-  "namespace": "paddyinpdx.demos.avro",
-  "name": "AisPositionEvent",
+  "namespace": "shiptracker.demos.avro",
+  "name": "PositionEvent",
   "fields": [
     {
       "name": "mmsi",

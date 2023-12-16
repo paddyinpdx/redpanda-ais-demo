@@ -4,9 +4,12 @@ import configparser
 from time import gmtime
 from datetime import datetime, timezone
 from confluent_kafka import avro
-from confluent_kafka import SerializingProducer
 from confluent_kafka.schema_registry import SchemaRegistryClient
+from confluent_kafka import SerializingProducer
+from confluent_kafka import DeserializingConsumer
 from confluent_kafka.schema_registry.avro import AvroSerializer
+from confluent_kafka.schema_registry.avro import AvroDeserializer
+from confluent_kafka.cimpl import KafkaError
 
 def get_config():
     config = configparser.ConfigParser()
@@ -44,19 +47,50 @@ def get_logger():
 
     return logger
 
+def get_consumer(group_id, topic, logger):
+    config = get_config()
+
+    # Schema registry client configuration
+    schema_registry_conf = {'url': config['schema_registry_url']}
+    schema_registry_client = SchemaRegistryClient(schema_registry_conf)
+
+    key_deserializer = AvroDeserializer(
+        schema_registry_client
+    )
+
+    value_deserializer = AvroDeserializer(
+        schema_registry_client
+    )
+
+    kafka_config = {
+        'bootstrap.servers': config['bootstrap_servers'],
+        # Normally one would set a non-changing group id, but for a demo, it's nice to be able to
+        # run the script and have all messages in the topic be consumed. If you want a fixed group_id,
+        # swap the commented lines below.
+        # See https://stackoverflow.com/questions/49945450/why-is-kafka-consumer-ignoring-my-earliest-directive-in-the-auto-offset-reset
+        # 'group.id': f'{group_id}-{time.strftime("%Y%m%d-%H%M%S")}',
+        'group.id': group_id,
+        'key.deserializer': key_deserializer,
+        'value.deserializer': value_deserializer,
+        'auto.offset.reset': 'earliest',
+        'error_cb': on_error_callback,
+        # 'debug': 'all',
+        'logger': logger
+    }
+
+    return DeserializingConsumer(kafka_config)
+
 def get_producer(schema_name, logger):
-    schema_registry_conf = {'url': 'http://localhost:18081'}
+    config = get_config()
+
+    schema_registry_conf = {'url': config['schema_registry_url']}
     schema_registry_client = SchemaRegistryClient(schema_registry_conf)
     key_schema, value_schema = load_avro_ais_schema(schema_name)
     key_serializer = AvroSerializer(schema_registry_client, f"{key_schema}")
     value_serializer = AvroSerializer(schema_registry_client, f"{value_schema}")
 
-    config = {
-        'bootstrap.servers' : "localhost:19092",
-        'schema.registry.url' : "http://localhost:18081"
-    }
     producer_config = {
-        'bootstrap.servers': 'localhost:19092',
+        'bootstrap.servers': config['bootstrap_servers'],
         'key.serializer': key_serializer,
         'value.serializer': value_serializer,
         'acks': 'all',
@@ -78,3 +112,6 @@ def load_avro_ais_schema(schema_name):
 
 def epoch_to_iso_8601_utc(epoch):
     return datetime.utcfromtimestamp(epoch).isoformat() + 'Z'
+
+def on_error_callback(error: KafkaError):
+    logger.error(error)
