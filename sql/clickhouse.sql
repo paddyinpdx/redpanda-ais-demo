@@ -23,7 +23,6 @@ settings
     kafka_broker_list = 'redpanda:9092',
     kafka_topic_list = 'position-events-with-weather',
     kafka_group_name = 'position-events-with-weather-consumer-group',
-    kafka_num_consumers = 1,
     kafka_format = 'AvroConfluent',
     format_avro_schema_registry_url = 'http://redpanda:18081'
 

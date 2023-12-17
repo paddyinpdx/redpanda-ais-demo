@@ -41,24 +41,27 @@ try:
                         else:
                             status = "NotReported"
 
+                        mmsi = m["mmsi"]
                         speed = m["speed"]
-                        # Ignore ships that are probably not moving, or
-                        # are reporting moving too fast, which is probably
-                        # an error (quite a few report 102 for some reason).
-                        if speed > 2 and speed < 75:
+                        lat = m["lat"]
+                        lon = m["lon"]
+                        # Ignore ships with erroneous data or almost no movement.
+                        if (speed > 2 and speed < 75 and lat <= 90 and lon <= 180):
                             value = {
-                                "mmsi": m["mmsi"],
+                                "mmsi": mmsi,
                                 "timestamp": int(t["receiver_timestamp"], 10),
                                 "status": status,
                                 "location": {
-                                  "lat": m["lat"],
-                                  "lon": m["lon"]
+                                  "lat": lat,
+                                  "lon": lon
                                 },
                                 "speed": speed,
                                 "heading": m["heading"]
                             }
 
                             utils.publish_message(position_producer, logger, position_topic, key, value)
+                        else:
+                            logger.info(f"Data out of bounds. Skipping: MMSI: {mmsi} Speed: {speed}, lat: {lat}, lon: {lon}")
                     case 5:
                         shiptype = m.get("ship_type", {})
                         if hasattr(shiptype, "value"):
