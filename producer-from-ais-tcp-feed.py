@@ -43,13 +43,15 @@ try:
 
                         mmsi = m["mmsi"]
                         speed = m["speed"]
+                        heading = m["heading"]
                         lat = m["lat"]
                         lon = m["lon"]
+                        timestamp = int(t["receiver_timestamp"], 10)
                         # Ignore ships with erroneous data or almost no movement.
-                        if (speed > 2 and speed < 75 and lat <= 90 and lon <= 180):
+                        if (speed > 2 and speed < 75 and lat <= 90 and lon <= 180 and heading < 360):
                             value = {
                                 "mmsi": mmsi,
-                                "timestamp": int(t["receiver_timestamp"], 10),
+                                "timestamp": timestamp,
                                 "status": status,
                                 "location": {
                                   "lat": lat,
@@ -61,7 +63,7 @@ try:
 
                             utils.publish_message(position_producer, logger, position_topic, key, value)
                         else:
-                            logger.info(f"Data out of bounds. Skipping: MMSI: {mmsi} Speed: {speed}, lat: {lat}, lon: {lon}")
+                            logger.info(f"Data out of bounds. Skipping MMSI {mmsi} at {timestamp}")
                     case 5:
                         shiptype = m.get("ship_type", {})
                         if hasattr(shiptype, "value"):
