@@ -1,4 +1,6 @@
 version: '3'
+volumes:
+  clickhouse: null
 networks:
   ship_tracker_network:
     driver: bridge
@@ -18,5 +20,3 @@ services:
           hard: 262144
       networks: 
         - ship_tracker_network
-volumes:
-  clickhouse: null

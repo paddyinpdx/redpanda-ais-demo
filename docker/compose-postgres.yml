@@ -1,18 +1,26 @@
 version: '3'
-
+networks:
+  ship_tracker_network:
+    driver: bridge
+volumes:
+  postgres_db:
+    driver: local
 services:
   postgres:
     image: postgres:latest
     container_name: postgres
     restart: always
+    # See https://www.postgresql.org/docs/8.0/runtime-config.html, section 16.4.1
+    command: ["postgres", "-c", "config_file=/etc/postgresql.conf", "-c", "hba_file=/etc/pg_hba.conf"]
     environment:
-      POSTGRES_USER: ship_voyage_user
+      POSTGRES_USER: ship_voyage_producer_user
       POSTGRES_PASSWORD: password123
     ports:
       - 5432:5432
     volumes:
       - postgres_db:/var/lib/postgresql/data
+      - ./postgresql.conf:/etc/postgresql.conf
+      - ./pg_hba.conf:/etc/pg_hba.conf
       - ./../sql/init.sql:/docker-entrypoint-initdb.d/init.sql
-volumes:
-  postgres_db:
-    driver: local
+    networks:
+      - ship_tracker_network

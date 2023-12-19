@@ -1,13 +1,8 @@
--- Create database
 CREATE DATABASE ship_voyage;
 
--- Use the created database 
+-- Use the created database
 \c ship_voyage
 
--- Create user
--- CREATE USER ship_voyage_user WITH PASSWORD 'password123';
-
--- Create table
 CREATE TABLE ship
 (
     mmsi SERIAL PRIMARY KEY,
@@ -15,8 +10,13 @@ CREATE TABLE ship
     type VARCHAR(255) NOT NULL,
     callsign VARCHAR(255) NOT NULL,
     destination VARCHAR(255),
-    receiver_timestamp TIMESTAMPTZ NOT NULL
+    timestamp BIGINT NOT NULL
 );
 
--- Grant privileges
-GRANT ALL PRIVILEGES ON DATABASE ship_voyage TO ship_voyage_user;
+-- This user has already been created by setting the POSTGRES_USER
+-- and POSTGRES_PASSWORD environment variables in the docker compose file.
+GRANT ALL PRIVILEGES ON DATABASE ship_voyage TO ship_voyage_producer_user;
+
+CREATE USER clickhouse_consumer_user WITH PASSWORD 'password456';
+GRANT CONNECT ON DATABASE ship_voyage TO clickhouse_consumer_user;
+GRANT SELECT ON ship TO clickhouse_consumer_user;

@@ -29,43 +29,41 @@ settings
 --##########################################################################
 
 describe table nst.ship_pos_and_wx_queue;
+-- Really useful for debugging.
 select * from system.kafka_consumers;
 
 --##########################################################################
 
-create table if not exists nst.ship_and_voyage_queue (
+create materialized view nst.ship_pos_and_wx_mv
+            ENGINE = Memory
+as
+select *
+from nst.ship_pos_and_wx_queue
+         settings
+    stream_like_engine_allow_direct_select = 1;
+
+--##########################################################################
+
+show view nst.ship_pos_and_wx_mv;
+select count() from nst.ship_pos_and_wx_mv;
+
+--##########################################################################
+
+create table if not exists nst.ship_and_voyage (
     mmsi UInt32,
     timestamp DateTime64(3, 'UTC'),
     name String,
     type String,
     callsign String,
     destination String
-) ENGINE = Kafka()
-settings
-    --TODO: add postgres source
-
-describe table nst.ship_and_voyage_queue;
+) ENGINE = PostgreSQL('postgres:5432', 'ship_voyage', 'ship', 'clickhouse_consumer_user', 'password456', 'public');
 
 --##########################################################################
 
-create materialized view nst.ship_view
-    ENGINE = Memory
-as
-select *
-from nst.ship_pos_and_wx_queue
-settings
-stream_like_engine_allow_direct_select = 1;
+show table nst.ship_and_voyage;
 
 --##########################################################################
 
-show view nst.ship_view;
-select count() from nst.ship_view;
-
---##########################################################################
-
-select
-    sv.*, sv.name
-from nst.ship_view as sv
-group by name
-order by sum(mmsi) desc
-limit 10;
+select mv.mmsi,t.name,t.callsign,t.type,t.destination,mv.status,mv.heading,mv.speed,mv.lat,mv.lon,mv.region,mv.locale,mv.condition,mv.temp_f,mv.wind_dir,mv.wind_mph,mv.timestamp
+from nst.ship_view mv
+left outer join nst.ship_and_voyage t on mv.mmsi = t.mmsi

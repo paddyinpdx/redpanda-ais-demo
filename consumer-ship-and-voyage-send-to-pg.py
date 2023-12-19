@@ -36,13 +36,11 @@ if __name__ == '__main__':
             else:
                 v = msg.value()
 
-                timestamp_iso = utils.epoch_to_iso_8601_utc(v['timestamp'])
-
                 logger.info(
                     f'offset {msg.offset()} key: {str(msg.key())} value: {str(v)}'
                 )
 
-                query = cursor.mogrify("INSERT INTO ship (mmsi, name, type, callsign, destination, receiver_timestamp) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (mmsi) DO UPDATE SET destination = %s", (v['mmsi'],v['shipname'],v['shiptype'],v['callsign'],v['destination'],timestamp_iso,v['destination']))
+                query = cursor.mogrify("INSERT INTO ship (mmsi, name, type, callsign, destination, timestamp) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (mmsi) DO UPDATE SET destination = %s", (v['mmsi'],v['shipname'],v['shiptype'],v['callsign'],v['destination'],v['timestamp'],v['destination']))
 
                 logger.info(query)
                 cursor.execute(query)

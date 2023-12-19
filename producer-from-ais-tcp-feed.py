@@ -26,7 +26,7 @@ try:
             # (but maybe it would be OK to use the current time in that case?)
             msg.tag_block.init()
             t = msg.tag_block.asdict()
-
+            timestamp = int(t["receiver_timestamp"], 10)
             msg_type = m["msg_type"]
             key = str(uuid4())
             # print(f"Publishing message with message type {msg_type}")
@@ -46,7 +46,6 @@ try:
                         heading = m["heading"]
                         lat = m["lat"]
                         lon = m["lon"]
-                        timestamp = int(t["receiver_timestamp"], 10)
                         # Ignore ships with erroneous data or almost no movement.
                         if (speed > 2 and speed < 75 and lat <= 90 and lon <= 180 and heading < 360):
                             value = {
@@ -73,7 +72,7 @@ try:
 
                         value = {
                             "mmsi": m["mmsi"],
-                            "timestamp": int(t["receiver_timestamp"], 10),
+                            "timestamp": timestamp,
                             "shipname": m["shipname"],
                             "callsign": m["callsign"],
                             "shiptype": shiptype,
