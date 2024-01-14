@@ -20,15 +20,19 @@ create table if not exists nst.ship_pos_and_wx_queue (
 ) ENGINE = Kafka()
 -- https://clickhouse.com/docs/en/engines/table-engines/integrations/kafka
 settings
-    kafka_broker_list = 'redpanda:9092',
+    -- Same as the Kafka bootstrap.servers property, but for the internal network.
+    kafka_broker_list = 'redpanda-1.redpanda.default.svc.cluster.local.:9093',
     kafka_topic_list = 'position-events-with-weather',
     kafka_group_name = 'position-events-with-weather-consumer-group',
     kafka_format = 'AvroConfluent',
-    format_avro_schema_registry_url = 'http://redpanda:18081'
+    format_avro_schema_registry_url = 'http://redpanda-1.redpanda.default.svc.cluster.local.:8081'
 
 --##########################################################################
 
 describe table nst.ship_pos_and_wx_queue;
+
+--##########################################################################
+
 -- Really useful for debugging.
 select * from system.kafka_consumers;
 
@@ -45,6 +49,9 @@ from nst.ship_pos_and_wx_queue
 --##########################################################################
 
 show view nst.ship_pos_and_wx_mv;
+
+--##########################################################################
+
 select count() from nst.ship_pos_and_wx_mv;
 
 --##########################################################################
@@ -56,7 +63,7 @@ create table if not exists nst.ship_and_voyage (
     type String,
     callsign String,
     destination String
-) ENGINE = PostgreSQL('postgres:5432', 'ship_voyage', 'ship', 'clickhouse_consumer_user', 'password456', 'public');
+) ENGINE = PostgreSQL('postgres-postgresql.default.svc.cluster.local:5432', 'ship_voyage', 'ship', 'clickhouse_consumer_user', 'password456', 'public');
 
 --##########################################################################
 
