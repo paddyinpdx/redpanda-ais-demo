@@ -1,10 +1,10 @@
 Norwegian Ship Tracking Demo Using RedPanda, Postgres, and ClickHouse
 
-# Overview
+## Overview
 
 Demo was built on an M1 Macbook Air w/ 16 GB RAM. Untested on other platforms.
 
-# Preqrequisites
+## Preqrequisites
 
 brew install:
 - multipass (to set up Ubuntu VMs)
@@ -16,7 +16,7 @@ brew install:
 
 pip3 install requirements.txt
 
-# Create K3S Cluster
+## Create K3S Cluster
 
 Uses https://github.com/tomowatt/k3s-multipass-bootstrap.
 
@@ -36,19 +36,20 @@ kubectl get nodes -o wide
 cat ~/.kube/config
 ```
 
-# Deploy RedPanda via Helm
+## Deploy RedPanda via Helm
 
 Use [RedPanda's Helm chart](https://github.com/redpanda-data/helm-charts/) to deploy a RedPanda cluster.
 
 Changes to the values.yaml file:
+```
 - external.type NodePort
 - external.domain demo.local
 - tls.enabled false
 - monitoring.enabled true
 - storage.persistentVolume.size 5Gi
 - config.cluster.auto_create_topics_enabled true
-
-Install RedPanda:
+```
+To install:
 ```
 helm repo add redpanda https://charts.redpanda.com
 helm repo update
@@ -98,14 +99,14 @@ echo "test message" | rpk topic produce test_topic
 rpk topic consume test_topic
 ```
 
-# Install Prometheus and add RedPanda dashboard to Grafana
-
+## Install Prometheus and add RedPanda dashboard to Grafana
 Changes to the values.yaml file:
 ```
 serviceMonitorSelector:
   matchLabels:
    app.kubernetes.io/name: redpanda
 ```    
+To install:
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
@@ -131,10 +132,12 @@ Use rpk to generate a dashboard:
 `rpk generate grafana-dashboard --datasource prometheus --metrics-endpoint http://redpanda-0.demo.local:9644/public_metrics > redpanda-dashboard.json`
 Add the dashboard to Grafana and you should be able to see RedPanda metrics!
 
-# Install ClickHouse
+## Install ClickHouse
 Changes to the values.yaml file:
+```
 - persistence.size 2Gi
-
+```
+To install:
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
@@ -151,8 +154,9 @@ echo $(kubectl get secret --namespace default clickhouse -o jsonpath="{.data.adm
 
 Now open http://localhost:8123/play in a browser. Then in the upper right, enter the password. You can now run the queries that are defined in ./sql/clickhouse.sql.
 
-# Install PostgreSQL
+## Install PostgreSQL
 Changes to the values.yaml file:
+```
 - image.debug true
 - auth.enablePostgresUser true
 - auth.postgresPassword "password00"
@@ -160,6 +164,7 @@ Changes to the values.yaml file:
 - primary.pgHbaConfiguration
 - primary.initdb.scripts.init.sql
 - primary.service.type NodePort
+```
 
 Install Postgres:
 ```
