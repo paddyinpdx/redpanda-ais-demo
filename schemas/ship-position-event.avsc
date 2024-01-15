@@ -5,7 +5,7 @@
   "fields": [
     {
       "name": "mmsi",
-      "type": "int"
+      "type": "string"
     },
     {
       "name": "status",

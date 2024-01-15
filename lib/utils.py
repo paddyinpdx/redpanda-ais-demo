@@ -13,7 +13,7 @@ from confluent_kafka.cimpl import KafkaError
 
 def get_config():
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    config.read('../config.ini')
     return config['DEFAULT']
 
 def delivery_callback(error, original_event):
@@ -106,7 +106,7 @@ def load_avro_ais_schema(schema_name):
     """
 
     key_schema = avro.loads(key_schema_string)
-    value_schema = avro.load(f"./schemas/{schema_name}.avsc")
+    value_schema = avro.load(f"../schemas/{schema_name}.avsc")
 
     return key_schema, value_schema
 

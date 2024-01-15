@@ -14,7 +14,11 @@ brew install:
 - kubernetes-ctl (for kubectl client)
 - helm
 
-pip3 install requirements.txt
+```
+pip install -r requirements.txt
+```
+
+Obtain a free API key for [WeatherAPI.com](https://rapidapi.com/weatherapi/api/weatherapi-com/) on RapidAPI.
 
 ## Create K3S Cluster
 
@@ -47,7 +51,6 @@ Changes to the values.yaml file:
 - tls.enabled false
 - monitoring.enabled true
 - storage.persistentVolume.size 5Gi
-- config.cluster.auto_create_topics_enabled true
 ```
 To install:
 ```
@@ -91,12 +94,11 @@ kubectl port-forward service/redpanda-console 8080:8080
 ```
 Then open http://localhost:8080 in a browser.
 
-Now do some basic operations with rpk:
+Create the topics:
 ```
-rpk topic create test_topic
-rpk topic describe test_topic
-echo "test message" | rpk topic produce test_topic
-rpk topic consume test_topic
+rpk topic create ship-position-events
+rpk topic create ship-info-and-destination-events
+rpk topic create ship-position-events-with-weather
 ```
 
 ## Install Prometheus and add RedPanda dashboard to Grafana

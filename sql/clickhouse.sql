@@ -3,7 +3,7 @@ create database nst;
 --##########################################################################
 -- Use https://clickhouse.com/docs/en/integrations/kafka/kafka-table-engine
 create table if not exists nst.ship_pos_and_wx_queue (
-    mmsi UInt32,
+    mmsi String,
     timestamp DateTime('UTC'),
     status String,
     heading Decimal,
@@ -22,8 +22,8 @@ create table if not exists nst.ship_pos_and_wx_queue (
 settings
     -- Same as the Kafka bootstrap.servers property, but for the internal network.
     kafka_broker_list = 'redpanda-1.redpanda.default.svc.cluster.local.:9093',
-    kafka_topic_list = 'position-events-with-weather',
-    kafka_group_name = 'position-events-with-weather-consumer-group',
+    kafka_topic_list = 'ship-position-events-with-weather',
+    kafka_group_name = 'ship-position-events-with-weather-consumer-group',
     kafka_format = 'AvroConfluent',
     format_avro_schema_registry_url = 'http://redpanda-1.redpanda.default.svc.cluster.local.:8081'
 
@@ -55,6 +55,7 @@ show view nst.ship_pos_and_wx_mv;
 select count() from nst.ship_pos_and_wx_mv;
 
 --##########################################################################
+-- Pull in ship metadata from PostgreSQL
 
 create table if not exists nst.ship_and_voyage (
     mmsi UInt32,
@@ -70,6 +71,7 @@ create table if not exists nst.ship_and_voyage (
 show table nst.ship_and_voyage;
 
 --##########################################################################
+-- Join together the ship location and weather data with the ship metadata
 
 select mv.mmsi,t.name,t.callsign,t.type,t.destination,mv.status,mv.heading,mv.speed,mv.lat,mv.lon,mv.region,mv.locale,mv.condition,mv.temp_f,mv.wind_dir,mv.wind_mph,mv.timestamp
 from nst.ship_pos_and_wx_mv mv
