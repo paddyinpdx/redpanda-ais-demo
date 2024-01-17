@@ -248,7 +248,7 @@ Go to the ClickHouse Playground open in your browser (see steps above). Copy and
 You are now ready to run the producer and consumer scripts. Run each in their own terminal window:
 ```
 python lib/producer-from-ais-api.py
-consumer-and-producer-enrich-position-with-weather.py
+python consumer-and-producer-enrich-position-with-weather.py
 python lib/consumer-ship-info-and-destination-to-pg.py
 ```
 
