@@ -5,6 +5,7 @@ attrs==23.1.0
 avro==1.11.3
 bitarray==2.8.4
 blinker==1.7.0
+branca==0.7.0
 cachetools==5.3.2
 certifi @ file:///private/tmp/python-certifi-20231211-18102-76ipel/certifi-2023.11.17
 cffi @ file:///private/tmp/cffi-20231014-5216-8jirg3/cffi-1.16.0
@@ -62,6 +63,7 @@ safetensors==0.4.1
 six==1.16.0
 smmap==5.0.1
 streamlit==1.29.0
+streamlit-autorefresh==1.0.1
 streamlit-folium==0.17.4
 sympy==1.12
 tenacity==8.2.3

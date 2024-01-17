@@ -9,7 +9,6 @@ st.set_page_config(layout="wide")
 config = utils.get_config()
 
 "# Norwegian Ship and Weather Tracker Demo"
-st.divider()
 left_col, right_col = st.columns(2)
 with left_col:
     st.image(
@@ -20,6 +19,7 @@ with right_col:
     st.image("https://www.kystverket.no/UI/Icons/logo.svg")
 
 st.write("A dashboard showing the [Norwegian AIS shipping feed](https://www.kystverket.no/en/navigation-and-monitoring/ais/access-to-ais-data/) enriched with real-time weather data from [WeatherAPI.com](https://rapidapi.com/weatherapi/api/weatherapi-com/), built with [Redpanda](https://redpanda.com/), PostgreSQL, [ClickHouse](https://clickhouse.com/), and [Streamlit](https://streamlit.io/). Note: MMSI is the acronym for Maritime Mobile Service Identity, a unique 9-digit number that identifies a ship.")
+st.divider()
 
 # ClickHouse client connection
 client = clickhouse_connect.get_client(
@@ -82,7 +82,7 @@ for i,r in df_ship_details.iterrows():
     lon = r['lon']
     lat_units = '°N' if lat > 0 else '°S'
     lon_units = '°E' if lon > 0 else '°W'
-    tooltip = f"Name: {r['name']}, Type: {r['type']}, Status: {r['status']}"
+    tooltip = f"Name: {r['name']}, Callsign: {r['callsign']}, Type: {r['type']}, Status: {r['status']}"
     popup = f"<strong>Lat:</strong> {lat}{lat_units}<br/><strong>Lon:</strong> Lon: {lon}{lon_units}<br/><strong>Course:</strong> {r['heading']}° at {r['speed']} knots<br/><strong>Condition:</strong> {r['condition']}<br/><strong>Wind:</strong> {r['wind_mph']} mph {r['wind_dir']}<br/><strong>Temp:</strong> {r['temp_f']}°F<br/><strong>Location:</strong> {r['locale']}, {r['region']}"
     icon_color = icon_color_map.get(next((prefix for prefix in icon_color_map if r['type'].startswith(prefix)), default_color))
     icon = folium.Icon(icon="ship", prefix="fa", color=icon_color)
