@@ -14,16 +14,20 @@ ship_position_schema_name = config["ship_position_schema_name"]
 ship_info_and_destination_topic = config["ship_info_and_destination_topic"]
 ship_info_and_destination_schema_name = config["ship_info_and_destination_schema_name"]
 ship_position_producer = utils.get_producer(ship_position_schema_name, logger)
-ship_info_and_destination_producer = utils.get_producer(ship_info_and_destination_schema_name, logger)
+ship_info_and_destination_producer = utils.get_producer(
+    ship_info_and_destination_schema_name, logger
+)
 
 try:
-    for msg in TCPConnection(host=config['ais_feed_host'], port=int(config['ais_feed_port'])):
+    for msg in TCPConnection(
+        host=config["ais_feed_host"], port=int(config["ais_feed_port"])
+    ):
         decoded_message = msg.decode()
         m = decoded_message.asdict()
 
+        # Only proceed if there is a tag block because it has the timestamp
+        # (may also be OK to use a current timestamp, but wasn't sure)
         if msg.tag_block:
-            # Only proceed if there is a tag block because it has the timestamp
-            # (but maybe it would be OK to use the current time in that case?)
             msg.tag_block.init()
             t = msg.tag_block.asdict()
             timestamp = int(t["receiver_timestamp"], 10)
@@ -47,20 +51,29 @@ try:
                     lat = m["lat"]
                     lon = m["lon"]
                     # Ignore ships with erroneous data or almost no movement.
-                    if (speed > 2 and speed < 75 and lat <= 90 and lon <= 180 and heading < 360):
+                    if (
+                        speed > 2
+                        and speed < 75
+                        and lat <= 90
+                        and lon <= 180
+                        and heading < 360
+                    ):
                         value = {
                             "mmsi": key,
                             "timestamp": timestamp,
                             "status": status,
-                            "location": {
-                              "lat": lat,
-                              "lon": lon
-                            },
+                            "location": {"lat": lat, "lon": lon},
                             "speed": speed,
-                            "heading": m["heading"]
+                            "heading": m["heading"],
                         }
 
-                        utils.publish_message(ship_position_producer, logger, ship_position_topic, key, value)
+                        utils.publish_message(
+                            ship_position_producer,
+                            logger,
+                            ship_position_topic,
+                            key,
+                            value,
+                        )
                 case 5:
                     shiptype = m.get("ship_type", {})
                     if hasattr(shiptype, "value"):
@@ -77,14 +90,20 @@ try:
                         "shipname": m["shipname"],
                         "callsign": m["callsign"],
                         "shiptype": shiptype,
-                        "destination": m["destination"]
+                        "destination": m["destination"],
                     }
 
-                    utils.publish_message(ship_info_and_destination_producer, logger, ship_info_and_destination_topic, key, value)
+                    utils.publish_message(
+                        ship_info_and_destination_producer,
+                        logger,
+                        ship_info_and_destination_topic,
+                        key,
+                        value,
+                    )
 except KafkaException as e:
     print("Error occurred when publishing message:", e)
 except KeyboardInterrupt:
-    logger.info('Caught KeyboardInterrupt, stopping.')
+    logger.info("Caught KeyboardInterrupt, stopping.")
 finally:
     if ship_position_producer is not None:
         ship_position_producer.flush()
