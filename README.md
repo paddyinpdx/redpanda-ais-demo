@@ -31,8 +31,6 @@ pip install -r requirements.txt
 
 Obtain a free API key for [WeatherAPI.com](https://rapidapi.com/weatherapi/api/weatherapi-com/) on RapidAPI.
 
-Then clone the config-template.ini as config.ini and gradually fill in the values as you go through the steps below.
-
 ## Create K3S Cluster
 
 The script you will run is adapted https://github.com/tomowatt/k3s-multipass-bootstrap. This will overwrite ~/.kube/config,
@@ -213,6 +211,7 @@ Add the dashboards to Grafana and you should be able to see Redpanda metrics!
 Changes to the values.yaml file:
 
 ```
+- auth.password passwordCH!
 - persistence.size 2Gi
 ```
 
@@ -224,7 +223,7 @@ helm repo update
 helm install clickhouse bitnami/clickhouse --values=values-demo-clickhouse.yaml
 ```
 
-To use ClickHouse Playground in the browser you need to get the default user's password. Also set this password in your config.ini:
+To use ClickHouse Playground in the browser you need to get the default user's password:
 
 ```
 echo $(kubectl get secret --namespace default clickhouse -o jsonpath="{.data.admin-password}" | base64 -d)
@@ -262,15 +261,6 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 helm install postgres bitnami/postgresql --values=values-demo-postgresql.yaml
 ```
-
-Get the NodePort for the primary service and enter it in your config.ini:
-
-```
-kubectl get -o jsonpath="{.spec.ports[0].nodePort}" services postgres-postgresql
-# OR
-kubectl describe service postgres-postgresql
-```
-
 You should now be able to connect via psql:
 
 ```

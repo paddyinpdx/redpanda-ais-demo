@@ -234,7 +234,7 @@ containerSecurityContext:
 ##
 auth:
   username: default
-  password: ""
+  password: "passwordCH!"
   existingSecret: ""
   existingSecretKey: ""
 
