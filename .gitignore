@@ -1,4 +1,3 @@
 __pycache__/
 *.py[cod]
-config.ini
 redpanda-dashboard-*.json
