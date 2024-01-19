@@ -179,10 +179,10 @@ Then open http://localhost:8080 in a browser.
 Create the topics (you could also use set `auto_create_topics_enabled` to `true` in the values.yaml and update the cluster, but it's generally considered a best practice to manage topics manually):
 
 ```
-rpk topic create ship-position-events
+rpk topic create ship-position-events -p 3
 # Use compact b/c usually only the destination changes for any given ship, so we only need the latest.
-rpk topic create ship-info-and-destination-events -c cleanup.policy=compact
-rpk topic create ship-position-events-with-weather
+rpk topic create ship-info-and-destination-events -c cleanup.policy=compact -p 
+rpk topic create ship-position-events-with-weather -p 
 ```
 
 Test the HTTP Proxy API (pandaproxy):
@@ -252,6 +252,7 @@ Changes to the values.yaml file:
 - primary.pgHbaConfiguration
 - primary.initdb.scripts.init.sql
 - primary.service.type NodePort
+- primary.service.nodePorts.postgresql 30001
 ```
 
 Install Postgres:
