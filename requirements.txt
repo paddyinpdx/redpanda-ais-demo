@@ -1,6 +1,7 @@
 aiohttp==3.9.1
 aiosignal==1.3.1
 altair==5.2.0
+astroid==3.0.2
 attrs==23.1.0
 avro==1.11.3
 bitarray==2.8.4
@@ -26,6 +27,7 @@ GitPython==3.1.40
 huggingface-hub==0.19.4
 idna==3.6
 importlib-metadata==6.11.0
+isort==5.13.2
 Jinja2==3.1.2
 jsonschema==4.20.0
 jsonschema-specifications==2023.11.2
@@ -33,6 +35,7 @@ kafka-python==2.0.2
 lz4==4.3.2
 markdown-it-py==3.0.0
 MarkupSafe==2.1.3
+mccabe==0.7.0
 mdurl==0.1.2
 mpmath==1.3.0
 multidict==6.0.4
@@ -42,6 +45,7 @@ numpy==1.26.2
 packaging==23.2
 pandas==2.1.3
 Pillow==10.1.0
+platformdirs==4.1.0
 protobuf==4.25.1
 psutil @ file:///private/tmp/python-psutil-20231015-5097-d8cbf9/psutil-5.9.6
 psycopg2-binary==2.9.9
@@ -51,6 +55,7 @@ pyarrow-hotfix==0.6
 pycparser @ file:///private/tmp/pycparser-20231013-5387-1wj1ewr/pycparser-2.21
 pydeck==0.8.1b0
 Pygments==2.17.2
+pylint==3.0.3
 python-dateutil==2.8.2
 pytz==2023.3.post1
 PyYAML @ file:///private/tmp/pyyaml-20231018-5353-1w5l4nf/PyYAML-6.0.1
@@ -69,6 +74,7 @@ sympy==1.12
 tenacity==8.2.3
 tokenizers==0.15.0
 toml==0.10.2
+tomlkit==0.12.3
 toolz==0.12.0
 torch==2.1.1
 torchvision==0.16.1
