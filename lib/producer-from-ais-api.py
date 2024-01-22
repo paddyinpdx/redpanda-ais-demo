@@ -11,9 +11,10 @@ config = utils.get_config()
 
 ship_position_topic = config["ship_position_topic"]
 ship_position_schema_name = config["ship_position_schema_name"]
+ship_position_producer = utils.get_producer(ship_position_schema_name, logger)
+
 ship_info_and_destination_topic = config["ship_info_and_destination_topic"]
 ship_info_and_destination_schema_name = config["ship_info_and_destination_schema_name"]
-ship_position_producer = utils.get_producer(ship_position_schema_name, logger)
 ship_info_and_destination_producer = utils.get_producer(
     ship_info_and_destination_schema_name, logger
 )
