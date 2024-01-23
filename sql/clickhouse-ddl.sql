@@ -42,7 +42,7 @@ from nst.ship_pos_and_wx_queue
 
 create table if not exists nst.ship_and_voyage (
     mmsi String,
-    timestamp DateTime64(3, 'UTC'),
+    timestamp DateTime('UTC'),
     name String,
     type String,
     callsign String,
