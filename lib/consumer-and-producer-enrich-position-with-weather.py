@@ -15,10 +15,11 @@ if len(logger.handlers) == 0:
 
 group_id = "ship-position-events-consumer-group"
 consumer_topic = config["ship_position_topic"]
+consumer = utils.get_consumer(group_id, consumer_topic, logger)
+
 producer_topic = config["ship_position_with_weather_topic"]
 producer_schema = "ship-position-event-with-weather"
 producer = utils.get_producer(producer_schema, logger)
-consumer = utils.get_consumer(group_id, consumer_topic, logger)
 
 logger.info(f"Starting kafka avro consumer loop, topic: {consumer_topic}. ^C to exit.")
 
@@ -38,20 +39,16 @@ try:
             current_weather = json.loads(
                 weather.get_current_weather_for_location(loc["lat"], loc["lon"])
             )
-            required_keys = ["location", "current"]
-            if not all(key in current_weather for key in required_keys):
-                logger.error(
-                    f"Skipping weather record {current_weather} because it does not contain all required keys: {required_keys}"
-                )
-                continue
             if "error" in current_weather:
                 logger.error(
                     f'Error returned by weather API: {current_weather["error"]}'
                 )
                 continue
+            required_keys = ["location", "current"]
 
             wx_loc = current_weather["location"]
             wx = current_weather["current"]
+
             name = wx_loc["name"]
             region = wx_loc["region"]
             country = wx_loc["country"]
