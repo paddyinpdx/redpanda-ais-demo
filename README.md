@@ -264,8 +264,7 @@ helm install postgres bitnami/postgresql --values=values-demo-postgresql.yaml
 You should now be able to connect via psql:
 
 ```
-# Change the port to the NodePort from the output of the previous command
-psql -U postgres -d ship_voyage -h redpanda-0.demo.local -p 30533
+psql -U postgres -d ship_voyage -h redpanda-0.demo.local -p 30001
 # Enter password "password00", which was set in values-demo-postgresql.yaml
 # Then try to run the following to see the created table:
 \d+ ship
