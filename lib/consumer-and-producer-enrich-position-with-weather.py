@@ -45,7 +45,11 @@ try:
                 )
                 continue
             required_keys = ["location", "current"]
-
+            if not all(key in current_weather for key in required_keys):
+                logger.error(
+                    f"{current_weather}"
+                )
+                continue
             wx_loc = current_weather["location"]
             wx = current_weather["current"]
 
