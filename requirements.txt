@@ -48,7 +48,6 @@ Pillow==10.1.0
 platformdirs==4.1.0
 protobuf==4.25.1
 psutil @ file:///private/tmp/python-psutil-20231015-5097-d8cbf9/psutil-5.9.6
-psycopg2-binary==2.9.9
 pyais==2.5.9
 pyarrow==14.0.1
 pyarrow-hotfix==0.6

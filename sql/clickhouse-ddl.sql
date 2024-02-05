@@ -38,13 +38,30 @@ from nst.ship_pos_and_wx_queue
     stream_like_engine_allow_direct_select = 1;
 
 --##########################################################################
--- Pull in ship metadata from PostgreSQL
+-- Use https://clickhouse.com/docs/en/integrations/kafka/kafka-table-engine
+create table if not exists nst.ship_info_and_destination_queue (
+     mmsi String,
+     shipname String,
+     shiptype String,
+     callsign String,
+     destination String,
+     timestamp DateTime('UTC')
+) ENGINE = Kafka()
+-- https://clickhouse.com/docs/en/engines/table-engines/integrations/kafka
+settings
+    -- Same as the Kafka bootstrap.servers property, but for the internal network.
+    kafka_broker_list = 'redpanda-1.redpanda.default.svc.cluster.local.:9093',
+    kafka_topic_list = 'ship-info-and-destination-events',
+    kafka_group_name = 'ship-info-and-destination-events-consumer-group',
+    kafka_format = 'AvroConfluent',
+    format_avro_schema_registry_url = 'http://redpanda-1.redpanda.default.svc.cluster.local.:8081'
 
-create table if not exists nst.ship_and_voyage (
-    mmsi String,
-    timestamp DateTime('UTC'),
-    name String,
-    type String,
-    callsign String,
-    destination String
-) ENGINE = PostgreSQL('postgres-postgresql.default.svc.cluster.local:5432', 'ship_voyage', 'ship', 'clickhouse_consumer_user', 'password456', 'public');
+--##########################################################################
+
+create materialized view nst.ship_info_and_destination_mv
+            ENGINE = Memory
+as
+select *
+from nst.ship_info_and_destination_queue
+         settings
+    stream_like_engine_allow_direct_select = 1;
