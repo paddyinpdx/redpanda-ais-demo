@@ -21,7 +21,6 @@ These are needed if you want to run commands from localhost instead of using `ku
 brew install:
 
 - redpanda (for rpk client)
-- postgres (for psql client)
 
 Then install the Python dependencies:
 
@@ -238,59 +237,6 @@ kubectl port-forward service/clickhouse 8123:8123
 Now open http://localhost:8123/play in a browser. Then in the upper right, enter the password. You can now run the queries that are defined in ./sql/clickhouse-ddl.sql.
 
 You will return to this console a bit later to run the queries in /sql/clickhouse.sql.
-
-### PostgreSQL
-
-Changes to the values.yaml file:
-
-```
-- image.debug true
-- auth.enablePostgresUser true
-- auth.postgresPassword "password00"
-- primary.persistence.size 1Gi
-- primary.pgHbaConfiguration
-- primary.initdb.scripts.init.sql
-- primary.service.type NodePort
-- primary.service.nodePorts.postgresql 30001
-```
-
-Install Postgres:
-
-```
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo update
-helm install postgres bitnami/postgresql --values=values-demo-postgresql.yaml
-```
-
-You should now be able to connect via psql:
-
-```
-psql -U postgres -d ship_voyage -h redpanda-0.demo.local -p 30001
-# Enter password "password00", which was set in values-demo-postgresql.yaml
-# Then try to run the following to see the created table:
-\d+ ship
-# Then try to run the following to see the created users:
-\du+
-# `\dp+ ship` or `\dz` were not working for some reason, so run the equivalent:
-SELECT grantee, privilege_type
-FROM information_schema.role_table_grants
-WHERE table_name='ship';
-SELECT table_name, column_name, grantee, privilege_type
-FROM information_schema.column_privileges
-WHERE table_name = 'ship';
-# To quit
-\q
-```
-
-Note that if you need to tweak something in initdb, this is only run on the first install. To re-run it, you need to delete the PVC
-and uninstall PG:
-
-```
-kubectl delete persistentvolumeclaim data-postgres-postgresql-0
-helm uninstall postgres
-```
-
-Then you can reinstall PG.
 
 ### ClickHouse DDL Queries
 
