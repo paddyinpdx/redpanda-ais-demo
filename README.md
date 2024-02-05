@@ -249,7 +249,13 @@ You are now ready to run the producer and consumer scripts. Run each in their ow
 ```
 python lib/producer-from-ais-api.py
 python lib/consumer-and-producer-enrich-position-with-weather.py
-python lib/consumer-ship-info-and-destination-to-pg.py
+```
+
+## Run the Console
+
+```
+cd lib
+streamlit run console.py
 ```
 
 ## Uninstalling Everything
