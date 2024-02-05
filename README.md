@@ -276,3 +276,7 @@ streamlit run console.py
 multipass delete primary node1 node2
 multipass purge
 ```
+
+## Future Enhancements
+* Transform raw AIS messages into Avro messages using Redpanda Data Transforms (instead of doing so in the producer script)
+* Deploy the consumer script to Kubernetes so that it can be scaled
