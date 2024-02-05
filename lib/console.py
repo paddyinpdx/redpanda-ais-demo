@@ -41,11 +41,13 @@ select count(distinct mmsi) as ship_count from nst.ship_pos_and_wx_mv where spee
 """
 df_moving_gt_10_kts_ship_count = client.query_df(moving_gt_10_kts_ship_count_query)
 
+# Limit to 600 results to avoid overwhelming the dashboard
 ship_details_query = """
 select spw.mmsi,sid.shipname,sid.callsign,sid.shiptype,sid.destination,spw.status,spw.heading,spw.speed,spw.lat,spw.lon,spw.region,spw.locale,spw.condition,spw.temp_f,spw.wind_dir,spw.wind_mph,spw.timestamp
 from nst.ship_pos_and_wx_mv spw
 left outer join nst.ship_info_and_destination_mv sid on spw.mmsi = sid.mmsi
 where sid.shipname != ''
+limit 600
 """
 df_ship_details = client.query_df(ship_details_query)
 if df_ship_details.empty:
@@ -109,6 +111,9 @@ metric2.metric(
     value=df_moving_gt_10_kts_ship_count["ship_count"].values[0],
 )
 
+st.write(
+    "Note: The grid and map only show ships for which we currently have the ship name, type, etc."
+)
 st.dataframe(df_ship_details, hide_index=True, use_container_width=True)
 
 folium_static(m, width=1275, height=800)

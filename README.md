@@ -28,7 +28,7 @@ Then install the Python dependencies:
 pip install -r requirements.txt
 ```
 
-Obtain a free API key for [WeatherAPI.com](https://rapidapi.com/weatherapi/api/weatherapi-com/) on RapidAPI.
+Obtain a free API key for [WeatherAPI.com](https://rapidapi.com/weatherapi/api/weatherapi-com/) on RapidAPI. Note that you will be limited to 1000 requests per hour. If you need more, you can pay for a subscription.
 
 ## Create K3S Cluster
 
@@ -241,6 +241,18 @@ You will return to this console a bit later to run the queries in /sql/clickhous
 ### ClickHouse DDL Queries
 
 Go to the ClickHouse Playground open in your browser (see steps above). Copy and paste the queries in ./sql/clickhouse-ddl.sql and run them one at a time.
+
+### Handling "Can't get assignment." Errors
+
+Currently, if you stop both worker nodes and then restart, ClickHouse appears to "lose" the tables that use a Kafka engine. If you run `select * from system.kafka_consumers` 
+in ClickHouse they will be gone, but the Redpanda console will continue to show them as active assignments in their respective consumer groups. This means you cannot delete the 
+consumer group. To solve this problem, look at the assignment name, which is prefixed with the ClickHouse pod name. Then run the following:
+```
+kubectl delete pvc data-<assignment-name>, e.g., kubectl delete pvc data-clickhouse-shard0-2
+kubectl delete pod clickhouse-shard0-2
+helm upgrade -i clickhouse bitnami/clickhouse --values=values-demo-clickhouse.yaml
+```
+This will delete the ProvisionedVolumeClaim and the pod, and then reinstall the pod. Redpanda will no longer see an active assignment, and you can then recreate the tables in ClickHouse.
 
 ## Run the Producers and Consumers
 
