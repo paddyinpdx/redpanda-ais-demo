@@ -19,7 +19,7 @@ with right_col:
     st.image("https://www.kystverket.no/UI/Icons/logo.svg")
 
 st.write(
-    "A dashboard showing the [Norwegian AIS shipping feed](https://www.kystverket.no/en/navigation-and-monitoring/ais/access-to-ais-data/) enriched with real-time weather data from [WeatherAPI.com](https://rapidapi.com/weatherapi/api/weatherapi-com/), built with [Redpanda](https://redpanda.com/), PostgreSQL, [ClickHouse](https://clickhouse.com/), and [Streamlit](https://streamlit.io/). Note: MMSI is the acronym for Maritime Mobile Service Identity, a unique 9-digit number that identifies a ship."
+    "A dashboard showing the [Norwegian AIS shipping feed](https://www.kystverket.no/en/navigation-and-monitoring/ais/access-to-ais-data/) enriched with real-time weather data from [WeatherAPI.com](https://rapidapi.com/weatherapi/api/weatherapi-com/), built with [Redpanda](https://redpanda.com/), [ClickHouse](https://clickhouse.com/), and [Streamlit](https://streamlit.io/). Note: MMSI is the acronym for Maritime Mobile Service Identity, a unique 9-digit number that identifies a ship."
 )
 st.divider()
 
@@ -42,10 +42,10 @@ select count(distinct mmsi) as ship_count from nst.ship_pos_and_wx_mv where spee
 df_moving_gt_10_kts_ship_count = client.query_df(moving_gt_10_kts_ship_count_query)
 
 ship_details_query = """
-select mv.mmsi,t.name,t.callsign,t.type,t.destination,mv.status,mv.heading,mv.speed,mv.lat,mv.lon,mv.region,mv.locale,mv.condition,mv.temp_f,mv.wind_dir,mv.wind_mph,mv.timestamp
-from nst.ship_pos_and_wx_mv mv
-left outer join nst.ship_and_voyage t on mv.mmsi = t.mmsi
-where t.name != ''
+select spw.mmsi,sid.shipname,sid.callsign,sid.shiptype,sid.destination,spw.status,spw.heading,spw.speed,spw.lat,spw.lon,spw.region,spw.locale,spw.condition,spw.temp_f,spw.wind_dir,spw.wind_mph,spw.timestamp
+from nst.ship_pos_and_wx_mv spw
+left outer join nst.ship_info_and_destination_mv sid on spw.mmsi = sid.mmsi
+where sid.shipname != ''
 """
 df_ship_details = client.query_df(ship_details_query)
 if df_ship_details.empty:
@@ -86,11 +86,11 @@ for i, r in df_ship_details.iterrows():
     lon = r["lon"]
     lat_units = "°N" if lat > 0 else "°S"
     lon_units = "°E" if lon > 0 else "°W"
-    tooltip = f"Name: {r['name']}, Callsign: {r['callsign']}, Type: {r['type']}, Status: {r['status']}"
+    tooltip = f"Name: {r['shipname']}, Callsign: {r['callsign']}, Type: {r['shiptype']}, Status: {r['status']}"
     popup = f"<strong>Lat:</strong> {lat}{lat_units}<br/><strong>Lon:</strong> Lon: {lon}{lon_units}<br/><strong>Course:</strong> {r['heading']}° at {r['speed']} knots<br/><strong>Condition:</strong> {r['condition']}<br/><strong>Wind:</strong> {r['wind_mph']} mph {r['wind_dir']}<br/><strong>Temp:</strong> {r['temp_f']}°F<br/><strong>Location:</strong> {r['locale']}, {r['region']}"
     icon_color = icon_color_map.get(
         next(
-            (prefix for prefix in icon_color_map if r["type"].startswith(prefix)),
+            (prefix for prefix in icon_color_map if r["shiptype"].startswith(prefix)),
             default_color,
         )
     )
@@ -111,4 +111,4 @@ metric2.metric(
 
 st.dataframe(df_ship_details, hide_index=True, use_container_width=True)
 
-folium_static(m, width=1440, height=800)
+folium_static(m, width=1275, height=800)

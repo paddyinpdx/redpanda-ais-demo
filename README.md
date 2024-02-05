@@ -179,8 +179,8 @@ Create the topics (you could also use set `auto_create_topics_enabled` to `true`
 ```
 rpk topic create ship-position-events -p 3
 # Use compact b/c usually only the destination changes for any given ship, so we only need the latest.
-rpk topic create ship-info-and-destination-events -c cleanup.policy=compact -p 
-rpk topic create ship-position-events-with-weather -p 
+rpk topic create ship-info-events -c cleanup.policy=compact -p 
+rpk topic create ship-position-events-with-weather -p
 ```
 
 Test the HTTP Proxy API (pandaproxy):
@@ -261,6 +261,7 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 helm install postgres bitnami/postgresql --values=values-demo-postgresql.yaml
 ```
+
 You should now be able to connect via psql:
 
 ```
