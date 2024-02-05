@@ -1,4 +1,4 @@
-# Norwegian Ship Tracking Demo Using Redpanda, Postgres, and ClickHouse
+# Norwegian Ship Tracking Demo Using Redpanda and ClickHouse
 
 ## Overview
 
