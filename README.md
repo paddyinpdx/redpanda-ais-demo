@@ -77,7 +77,7 @@ To install:
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
-helm install prometheus prometheus-community/kube-prometheus-stack --values=values-demo-prometheus.yaml --values=values-demo-prometheus.yaml
+helm install prometheus prometheus-community/kube-prometheus-stack --values=values-demo-prometheus.yaml
 ```
 
 After about 20-30 seconds you should see output that indicates a successful deployment.
