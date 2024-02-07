@@ -4,6 +4,7 @@
 
 This demo application shows how to consume a live TCP stream, publish its data to Redpanda, consume and enrich data using a weather API, ingest it into ClickHouse to create materialized views, and then query ClickHouse to show the data in a Web portal that contains metrics, a grid and a map.
 
+![Misc - Norwegian Ship Tracker POC Architecture](https://github.com/paddyinpdx/redpanda-ais-demo/assets/7103368/ad34fc09-5d74-4ebe-9361-a7fbfe97002e)
 ![Screenshot 2024-02-05 at 15 36 07](https://github.com/paddyinpdx/redpanda-ais-demo/assets/7103368/445e42dd-0047-43f5-b32a-55224cc85f71)
 ![Screenshot 2024-02-05 at 15 36 22](https://github.com/paddyinpdx/redpanda-ais-demo/assets/7103368/8f7b16b1-2216-4aa3-a9f7-a833bb2ff1b1)
 
