@@ -2,11 +2,26 @@
 
 ## Overview
 
-This demo application shows how to consume a [live TCP stream of maritime shipping data provided by the Norwegian Coastal Administration](https://www.kystverket.no/en/navigation-and-monitoring/ais/access-to-ais-data/), publish its data to Redpanda, consume and enrich data using a weather API, ingest it into ClickHouse to create materialized views, and then query ClickHouse to show the data in a Web portal that contains metrics, a grid and a map.
+This demo application shows how to consume a [live TCP stream of maritime shipping data provided by the Norwegian Coastal Administration](https://www.kystverket.no/en/navigation-and-monitoring/ais/access-to-ais-data/), publish its data to Redpanda, consume and enrich data using a weather API, 
+ingest it into ClickHouse to create materialized views, and then query ClickHouse to show the data in a Web portal that contains metrics, a grid and a map.
 
+Highlights include:
+* No fake data: use of real-world APIs
+* No Docker Compose or minikube: three-node K3S local cluster
+* Three Redpanda topics, one consumer and two producers
+* Use of NodePorts instead of relying solely on port forwarding
+* Apache Avro instead of JSON Schema (binary provides optimal storage and serialization)
+* Dashboard shows metrics, grid with details, and interactive map
+* Monitoring with Prometheus and Grafana
+
+The Norwegian data feed consists of Automatic Identification System (AIS) messages. These are used for tracking ships:
+* Ship transceivers send data about ship characteristics / position
+* Vessel traffic services (e.g., Coast Guard) use w/ radar to manage
+
+![demo](https://github.com/paddyinpdx/redpanda-ais-demo/assets/7103368/e004f893-7a9f-4782-b366-55239b4c0e79)
+
+## Architecture
 ![Misc - Norwegian Ship Tracker POC Architecture](https://github.com/paddyinpdx/redpanda-ais-demo/assets/7103368/ad34fc09-5d74-4ebe-9361-a7fbfe97002e)
-![Screenshot 2024-02-05 at 15 36 07](https://github.com/paddyinpdx/redpanda-ais-demo/assets/7103368/445e42dd-0047-43f5-b32a-55224cc85f71)
-![Screenshot 2024-02-05 at 15 36 22](https://github.com/paddyinpdx/redpanda-ais-demo/assets/7103368/8f7b16b1-2216-4aa3-a9f7-a833bb2ff1b1)
 
 ## Preqrequisites
 
