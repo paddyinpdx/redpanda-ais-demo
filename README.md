@@ -36,7 +36,7 @@ Obtain a free API key for [WeatherAPI.com](https://rapidapi.com/weatherapi/api/w
 
 ## Create K3S Cluster
 
-The script you will run is adapted https://github.com/tomowatt/k3s-multipass-bootstrap. This will overwrite ~/.kube/config,
+The script you will run is adapted from https://github.com/tomowatt/k3s-multipass-bootstrap. This will overwrite ~/.kube/config,
 so either back it up if you need to, or consult the k3sup docs for how to merge the new config with the existing one.
 
 The script requires that you have a public and private SSH key pair. If you don't have one, Google how to create one.
